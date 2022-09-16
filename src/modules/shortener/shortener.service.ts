@@ -30,6 +30,10 @@ export class ShortenerService {
         }
         const exists = await this.findByUrl(url)
         if (exists) {
+            if (!exists.active) {
+                await this.updateActive(true, exists.id)
+                exists.active = true
+            }
             return {
                 url: exists.url,
                 code: exists.code,
