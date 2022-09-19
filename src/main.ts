@@ -42,7 +42,7 @@ async function bootstrap() {
     )
 
     // Global exception filter
-    // app.useGlobalFilters(new AllExceptionsFilter())
+    app.useGlobalFilters(new AllExceptionsFilter())
 
     // Swagger
     const config = new DocumentBuilder()
