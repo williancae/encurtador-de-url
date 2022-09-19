@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common'
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface'
 import { NestFactory } from '@nestjs/core'
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify'
+import { NestFastifyApplication } from '@nestjs/platform-fastify'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import * as compression from 'compression'
 import { json, urlencoded } from 'express'
@@ -9,7 +9,7 @@ import helmet from 'helmet'
 import { AppModule } from './app.module'
 import { AllExceptionsFilter } from './filters/http-exception.filter'
 async function bootstrap() {
-    const app = await await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())
+    const app = await NestFactory.create<NestFastifyApplication>(AppModule)
     app.enableShutdownHooks()
 
     //CORS
@@ -41,15 +41,8 @@ async function bootstrap() {
         }),
     )
 
-    app.setViewEngine({
-        engine: {
-            handlebars: require('handlebars'),
-        },
-        templates: './src/views',
-    })
-
     // Global exception filter
-    app.useGlobalFilters(new AllExceptionsFilter())
+    // app.useGlobalFilters(new AllExceptionsFilter())
 
     // Swagger
     const config = new DocumentBuilder()
@@ -58,10 +51,11 @@ async function bootstrap() {
         .setVersion('1.0')
         .setContact('Repositorio do Projeto', 'https://github.com/williancae/encurtador-de-url', undefined)
         .build()
-    const document = SwaggerModule.createDocument(app, config)
-    SwaggerModule.setup('/', app, document)
 
-    await app.listen(process.env.APP_PORT || 3000, '0.0.0.0', () =>
+    const document = SwaggerModule.createDocument(app, config)
+    SwaggerModule.setup('docs', app, document)
+
+    await app.listen(process.env.APP_PORT || 3000, '0.0.0.0', (): void =>
         console.log(`Server running on port ${process.env.APP_PORT || 3000}`),
     )
 }

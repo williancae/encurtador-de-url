@@ -81,7 +81,7 @@ export class ShortenerService {
             ...(url && { url }),
             ...(code && { code }),
         }
-        return this.shortenerModel.find(filtros).exec()
+        return await this.shortenerModel.find(filtros)
     }
 
     async disableShortenerSevenDays(): Promise<boolean> {

@@ -2,25 +2,26 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Controller, Get, Param, Render, Res } from '@nestjs/common'
+import { Controller, Get, Param, Res } from '@nestjs/common'
 import { Response } from 'express'
+import { Shortener } from './modules/shortener/schemas/shortener.schema'
 import { ShortenerService } from './modules/shortener/shortener.service'
-
 @Controller()
 export class AppController {
     constructor(private readonly service: ShortenerService) {}
 
-    @Get('r/:code')
+    @Get(':code')
     async redirectToOriginalUrl(@Param('code') code: string, @Res() res: Response) {
-        const data = await this.service.findByCode(code)
+        const data: Shortener = await this.service.findByCode(code)
         if (!data) {
-            res.redirect(302, 'http://localhost:3000/not-found')
+            res.redirect('/app/not-found')
         }
 
-        return res.redirect(301, data.url)
+        res.redirect(301, data.url)
     }
 
-    @Get('/not-found')
-    @Render('notfound')
-    async notFound(@Res() res: Response): Promise<void> {}
+    @Get('/app/not-found')
+    async notFound(@Res() res: Response) {
+        res.render(__dirname + '/templates/notfound.hbs')
+    }
 }
