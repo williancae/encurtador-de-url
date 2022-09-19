@@ -7,7 +7,6 @@ import * as compression from 'compression'
 import { json, urlencoded } from 'express'
 import helmet from 'helmet'
 import { AppModule } from './app.module'
-import { AllExceptionsFilter } from './filters/http-exception.filter'
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(AppModule)
     app.enableShutdownHooks()
@@ -42,7 +41,7 @@ async function bootstrap() {
     )
 
     // Global exception filter
-    app.useGlobalFilters(new AllExceptionsFilter())
+    // app.useGlobalFilters(new AllExceptionsFilter())
 
     // Swagger
     const config = new DocumentBuilder()
